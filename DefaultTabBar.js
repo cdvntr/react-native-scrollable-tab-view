@@ -7,6 +7,7 @@ const {
   Text,
   View,
   Animated,
+  Image,
 } = ReactNative;
 const Button = require('./Button');
 
@@ -20,8 +21,8 @@ const DefaultTabBar = createReactClass({
     inactiveTextColor: PropTypes.string,
     textStyle: Text.propTypes.style,
     tabStyle: ViewPropTypes.style,
+    activeTabStyle: View.propTypes.style,
     renderTab: PropTypes.func,
-    underlineStyle: ViewPropTypes.style,
   },
 
   getDefaultProps() {
@@ -32,13 +33,14 @@ const DefaultTabBar = createReactClass({
     };
   },
 
-  renderTabOption(name, page) {
+  renderTabOption(name, page, isTabActive, onPressHandler, icon, style) {
   },
 
   renderTab(name, page, isTabActive, onPressHandler) {
     const { activeTextColor, inactiveTextColor, textStyle, } = this.props;
     const textColor = isTabActive ? activeTextColor : inactiveTextColor;
-    const fontWeight = isTabActive ? 'bold' : 'normal';
+    const fontWeight = 'normal';
+    const tabStyle = isTabActive ? this.props.activeTabStyle : this.props.tabStyle;
 
     return <Button
       style={{flex: 1, }}
@@ -48,7 +50,8 @@ const DefaultTabBar = createReactClass({
       accessibilityTraits='button'
       onPress={() => onPressHandler(page)}
     >
-      <View style={[styles.tab, this.props.tabStyle, ]}>
+      <View style={[styles.tab, tabStyle, ]}>
+        <Image source={icon} style={style} resizeMode="contain"/>
         <Text style={[{color: textColor, fontWeight, }, textStyle, ]}>
           {name}
         </Text>
@@ -73,10 +76,10 @@ const DefaultTabBar = createReactClass({
     });
     return (
       <View style={[styles.tabs, {backgroundColor: this.props.backgroundColor, }, this.props.style, ]}>
-        {this.props.tabs.map((name, page) => {
+        {this.props.tabs.map((props, page) => {
           const isTabActive = this.props.activeTab === page;
           const renderTab = this.props.renderTab || this.renderTab;
-          return renderTab(name, page, isTabActive, this.props.goToPage);
+          return renderTab(props.label, page, isTabActive, this.props.goToPage, props.icon, props.iconStyle);
         })}
         <Animated.View
           style={[
@@ -97,9 +100,10 @@ const DefaultTabBar = createReactClass({
 const styles = StyleSheet.create({
   tab: {
     flex: 1,
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingBottom: 10,
+    paddingBottom: 20,
   },
   tabs: {
     height: 50,
@@ -109,7 +113,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 0,
     borderLeftWidth: 0,
     borderRightWidth: 0,
-    borderColor: '#ccc',
+    borderColor: '#E1E1E1',
   },
 });
 

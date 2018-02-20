@@ -43,6 +43,7 @@ const ScrollableTabView = createReactClass({
     scrollWithoutAnimation: PropTypes.bool,
     locked: PropTypes.bool,
     prerenderingSiblingsNumber: PropTypes.number,
+    bounces: PropTypes.bool
   },
 
   getDefaultProps() {
@@ -232,6 +233,7 @@ const ScrollableTabView = createReactClass({
         onMomentumScrollEnd={this._onMomentumScrollBeginAndEnd}
         scrollEventThrottle={16}
         scrollsToTop={false}
+	bounces={this.props.bounces}	
         showsHorizontalScrollIndicator={false}
         scrollEnabled={!this.props.locked}
         directionalLockEnabled
@@ -356,7 +358,13 @@ const ScrollableTabView = createReactClass({
     let overlayTabs = (this.props.tabBarPosition === 'overlayTop' || this.props.tabBarPosition === 'overlayBottom');
     let tabBarProps = {
       goToPage: this.goToPage,
-      tabs: this._children().map((child) => child.props.tabLabel),
+      tabs: this._children().map((child) => {
+        return {
+          label: child.props.tabLabel,
+          icon: child.props.icon,
+          iconStyle: child.props.iconStyle
+        }
+      }),
       activeTab: this.state.currentPage,
       scrollValue: this.state.scrollValue,
       containerWidth: this.state.containerWidth,
@@ -376,6 +384,12 @@ const ScrollableTabView = createReactClass({
     }
     if (this.props.tabBarUnderlineStyle) {
       tabBarProps.underlineStyle = this.props.tabBarUnderlineStyle;
+    }
+    if (this.props.tabStyle) {
+      tabBarProps.tabStyle = this.props.tabStyle;
+    }
+    if (this.props.activeTabStyle) {
+      tabBarProps.activeTabStyle = this.props.activeTabStyle;
     }
     if (overlayTabs) {
       tabBarProps.style = {
